@@ -39,7 +39,7 @@ class RcDataReader(object):
         self._label_dict_path = label_dict_path
         self.train_data_list_path = train_data_list_path
         self.test_data_list_path = test_data_list_path
-        self._p_map_eng_dict = {}
+        self._p_map_eng_dict = {}    # 关系-英文映射
         # load dictionary
         self._dict_path_dict = {'wordemb_dict': self._wordemb_dict_path,
                                 'postag_dict': self._postag_dict_path,
@@ -57,25 +57,29 @@ class RcDataReader(object):
         self._feature_dict['wordemb_dict'] = \
                 self._load_dict_from_file(self._dict_path_dict['wordemb_dict'])
         self._feature_dict['label_dict'] = \
-                self._load_label_dict(self._dict_path_dict['label_dict'])
+                self._load_label_dict(self._dict_path_dict['label_dict'])  # label_dict_path='./dict/p_eng'
         self._reverse_dict = {name: self._get_reverse_dict(name) for name in
                               self._dict_path_dict.keys()}
-        self._reverse_dict['eng_map_p_dict'] = self._reverse_p_eng(self._p_map_eng_dict)
+        self._reverse_dict['eng_map_p_dict'] = self._reverse_p_eng(self._p_map_eng_dict) # 构造反向特征字典，与self._feature_dict对应
         self._UNK_IDX = 0
 
     def _load_label_dict(self, dict_name):
-        """load label dict from file"""
+        """
+        load label dict from file
+        键为关系的英文名 值为序号
+        """
         label_dict = {}
         with codecs.open(dict_name, 'r', 'utf-8') as fr:
             for idx, line in enumerate(fr):
                 p, p_eng = line.strip().split('\t')
                 label_dict[p_eng] = idx
-                self._p_map_eng_dict[p] = p_eng
+                self._p_map_eng_dict[p] = p_eng  # 关系-英文映射
         return label_dict
 
     def _load_dict_from_file(self, dict_name, bias=0):
         """
         Load vocabulary from file.
+        键为词性标签或单词 值为序号
         """
         dict_result = {}
         with codecs.open(dict_name, 'r', 'utf-8') as f_dict:

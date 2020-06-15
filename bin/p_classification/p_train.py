@@ -40,7 +40,7 @@ def train(conf_dict, data_reader, use_cuda=False):
     """
     Training of p classification model
     """
-    label_dict_len = data_reader.get_dict_size('label_dict')
+    label_dict_len = data_reader.get_dict_size('label_dict')  # 49类关系
     # input layer
     word = fluid.layers.data(
         name='word_data', shape=[1], dtype='int64', lod_level=1)
@@ -66,13 +66,14 @@ def train(conf_dict, data_reader, use_cuda=False):
         batch_size=conf_dict['batch_size'])
 
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
-    feeder = fluid.DataFeeder(feed_list=[word, postag, target], place=place)
+    feeder = fluid.DataFeeder(feed_list=[word, postag, target], place=place)  # 通过feeder将数据传入模型
     exe = fluid.Executor(place)
 
     save_dirname = conf_dict['p_model_save_dir']
 
     def train_loop(main_program, trainer_id=0):
         """start train"""
+        print >> sys.stderr, "start train"
         exe.run(fluid.default_startup_program())
 
         start_time = time.time()
@@ -124,13 +125,16 @@ def main(conf_dict, use_cuda=False):
     if use_cuda and not fluid.core.is_compiled_with_cuda():
         print >> sys.stderr, 'No GPU'
         return
+
+    # 读取输入数据
     data_generator = p_data_reader.RcDataReader(
-        wordemb_dict_path=conf_dict['word_idx_path'],
-        postag_dict_path=conf_dict['postag_dict_path'],
-        label_dict_path=conf_dict['label_dict_path'],
-        train_data_list_path=conf_dict['train_data_path'],
-        test_data_list_path=conf_dict['test_data_path'])
-    
+        wordemb_dict_path=conf_dict['word_idx_path'],  # dict/word_idx
+        postag_dict_path=conf_dict['postag_dict_path'],  # dict/postag_dict
+        label_dict_path=conf_dict['label_dict_path'],  # dict/label_dict
+        train_data_list_path=conf_dict['train_data_path'],  # data/train_data.json
+        test_data_list_path=conf_dict['test_data_path'])  # data/dev_data.json
+
+    # 进行训练
     train(conf_dict, data_generator, use_cuda=use_cuda)
 
 
@@ -141,6 +145,7 @@ if __name__ == '__main__':
         help="conf_file_path_for_model. (default: %(default)s)",
         required=True)
     args = parser.parse_args()
+    # 用lib/conf_lib.py从配置文件中获取配置参数
     conf_dict = conf_lib.load_conf(args.conf_path)
     use_gpu = True if conf_dict.get('use_gpu', 'False') == 'True' else False
     main(conf_dict, use_cuda=use_gpu)

@@ -35,14 +35,17 @@ def load_conf(conf_filename):
     cf = ConfigParser.ConfigParser()
     cf.read(conf_filename)
     int_conf_keys = {
-                'model_params': ["cost_threshold", "mark_dict_len", "word_dim",
+                'model_params': [
+                    "cost_threshold",
+                    "mark_dict_len",
+                    "word_dim",
                     "mark_dim", "postag_dim", "hidden_dim", "depth",
                     "pass_num", "batch_size", "class_dim"]
                 }
     for session_key in int_conf_keys:
         for option_key in int_conf_keys[session_key]:
+            option_value = cf.get(session_key, option_key)
             try:
-                option_value = cf.get(session_key, option_key)
                 param_conf_dict[option_key] = int(option_value)
             except:
                 raise ValueError("%s--%s is not a integer" % (session_key, option_key))
