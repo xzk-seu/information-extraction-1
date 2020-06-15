@@ -29,6 +29,7 @@ sys.setdefaultencoding('utf-8')
 def load_word_file(f_input):
     """
     Get all words in files
+    返回结果为键值对，键为单词，值为该词出现的次数
     :param string: input file
     """
     file_words = {}
@@ -49,6 +50,8 @@ def load_word_file(f_input):
 def get_vocab(train_file, dev_file):
     """
     Get vocabulary file from the field 'postag' of files
+    获取出现次数最多的30000个高频词
+    
     :param string: input train data file
     :param string: input dev data file
     """
@@ -70,16 +73,16 @@ def get_vocab(train_file, dev_file):
         print word[0]
         vocab_set.add(word[0])
 
-    #add predicate in all_50_schemas
-    if not os.path.exists('./data/all_50_schemas'):
-        raise ValueError("./data/all_50_schemas not found.")
-    with codecs.open('./data/all_50_schemas', 'r', 'utf-8') as fr:
-        for line in fr:
-            dic = json.loads(line.decode('utf-8').strip())
-            p = dic['predicate']
-            if p not in vocab_set:
-                vocab_set.add(p)
-                print p
+    # #add predicate in all_50_schemas
+    # if not os.path.exists('./data/all_50_schemas'):
+    #     raise ValueError("./data/all_50_schemas not found.")
+    # with codecs.open('./data/all_50_schemas', 'r', 'utf-8') as fr:
+    #     for line in fr:
+    #         dic = json.loads(line.decode('utf-8').strip())
+    #         p = dic['predicate']
+    #         if p not in vocab_set:
+    #             vocab_set.add(p)
+    #             print p
 
     
 if __name__ == '__main__':

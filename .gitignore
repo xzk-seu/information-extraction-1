@@ -1,0 +1,10 @@
+data/dev_data.json
+data/test1_data_postag.json
+data/test_data_postag.json
+data/train_data.json.zip
+data/json_trans.py
+data/test_demo_can_read.json
+data/test_demo_spo_can_read.json
+data/dev_can_read.json
+.idea
+.history
