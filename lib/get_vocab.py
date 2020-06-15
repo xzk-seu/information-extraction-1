@@ -51,7 +51,7 @@ def get_vocab(train_file, dev_file):
     """
     Get vocabulary file from the field 'postag' of files
     获取出现次数最多的30000个高频词
-    
+
     :param string: input train data file
     :param string: input dev data file
     """
